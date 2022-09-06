@@ -69,7 +69,7 @@ namespace Nirvana
             ? null
             : new GeneAnnotationProvider(PersistentStreamUtils.GetStreams(files.NgaFiles));
 
-        public static IAnnotationProvider GetNsaProvider(AnnotationFiles files)
+        public static IAnnotationProviderNSA GetNsaProvider(AnnotationFiles files)
         {
             if (files == null) return null;
 

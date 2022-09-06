@@ -162,7 +162,7 @@ namespace UnitTests.VariantAnnotation
             var taProvider = new Mock<IAnnotationProvider>();
             taProvider.SetupGet(x => x.Assembly).Returns(GenomeAssembly.GRCh37);
 
-            var saProvider = new Mock<IAnnotationProvider>();
+            var saProvider = new Mock<IAnnotationProviderNSA>();
             saProvider.SetupGet(x => x.Assembly).Returns(GenomeAssembly.GRCh37);
 
             var csProvider = new Mock<IAnnotationProvider>();
@@ -182,7 +182,7 @@ namespace UnitTests.VariantAnnotation
             var taProvider = new Mock<IAnnotationProvider>();
             taProvider.SetupGet(x => x.Assembly).Returns(GenomeAssembly.GRCh37);
 
-            var saProvider = new Mock<IAnnotationProvider>();
+            var saProvider = new Mock<IAnnotationProviderNSA>();
             saProvider.SetupGet(x => x.Assembly).Returns(GenomeAssembly.GRCh37);
 
             var csProvider = new Mock<IAnnotationProvider>();

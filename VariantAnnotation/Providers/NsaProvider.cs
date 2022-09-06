@@ -14,7 +14,7 @@ using Variants;
 
 namespace VariantAnnotation.Providers
 {
-    public sealed class NsaProvider : IAnnotationProvider
+    public sealed class NsaProvider : IAnnotationProviderNSA
     {
         public string                          Name               => "Supplementary annotation provider";
         public GenomeAssembly                  Assembly           { get; }
@@ -117,10 +117,17 @@ namespace VariantAnnotation.Providers
             throw new UserErrorException($"Multiple genome assemblies detected in Supplementary annotation directory.\n{sb}");
         }
 
-        public void Annotate(IAnnotatedPosition annotatedPosition)
+		public void Annotate(IAnnotatedPosition annotatedPosition)
         {
             if (_nsaReaders != null) AddPositionAndAlleleAnnotations(annotatedPosition);
             if (_nsiReaders != null) GetStructuralVariantAnnotations(annotatedPosition);
+            if (_hasFusionReaders && annotatedPosition.Position.HasStructuralVariant) GetGeneFusionAnnotations(annotatedPosition);
+        }
+
+        public void AnnotateNSA(IAnnotatedPosition annotatedPosition, int customInsertionWindowSize, int customBreakendWindowSize)
+        {
+            if (_nsaReaders != null) AddPositionAndAlleleAnnotations(annotatedPosition);
+            if (_nsiReaders != null) GetStructuralVariantAnnotations(annotatedPosition,customInsertionWindowSize,customBreakendWindowSize);
             if (_hasFusionReaders && annotatedPosition.Position.HasStructuralVariant) GetGeneFusionAnnotations(annotatedPosition);
         }
 
@@ -151,7 +158,7 @@ namespace VariantAnnotation.Providers
             return fusionPairs.Count == 0 ? null : fusionPairs.ToArray();
         }
 
-        private void GetStructuralVariantAnnotations(IAnnotatedPosition annotatedPosition)
+        private void GetStructuralVariantAnnotations(IAnnotatedPosition annotatedPosition, int customInsertionWindowSize = 0, int customBreakendWindowSize = 0)
         {
             bool needSaIntervals     = annotatedPosition.AnnotatedVariants.Any(x => x.Variant.Behavior.NeedSaInterval);
             bool needSmallAnnotation = annotatedPosition.AnnotatedVariants.Any(x => x.Variant.Behavior == AnnotationBehavior.SmallVariants);
@@ -162,7 +169,7 @@ namespace VariantAnnotation.Providers
                 if (nsiReader.ReportFor == ReportFor.SmallVariants      && !needSmallAnnotation) continue;
                 if (nsiReader.ReportFor == ReportFor.StructuralVariants && !needSaIntervals) continue;
 
-                IEnumerable<string> annotations = nsiReader.GetAnnotation(position.Variants[0]);
+                IEnumerable<string> annotations = nsiReader.GetAnnotation(position.Variants[0],customInsertionWindowSize,customBreakendWindowSize);
                 if (annotations == null) continue;
 
                 annotatedPosition.SupplementaryIntervals.Add(new SupplementaryAnnotation(nsiReader.JsonKey, true, false, null, annotations));

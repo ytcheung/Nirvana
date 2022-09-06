@@ -16,7 +16,7 @@ namespace VariantAnnotation
 {
     public sealed class Annotator : IAnnotator
     {
-        private readonly IAnnotationProvider      _saProvider;
+        private readonly IAnnotationProviderNSA   _saProvider;
         private readonly IAnnotationProvider      _gsaProvider;
         private readonly IAnnotationProvider      _taProvider;
         private readonly IAnnotationProvider      _lcrProvider;
@@ -31,7 +31,7 @@ namespace VariantAnnotation
 
         public Annotator(IAnnotationProvider taProvider,
             ISequenceProvider sequenceProvider,
-            IAnnotationProvider saProvider,
+            IAnnotationProviderNSA saProvider,
             IAnnotationProvider conservationProvider,
             IAnnotationProvider lcrProvider,
             IGeneAnnotationProvider geneAnnotationProvider,
@@ -82,7 +82,7 @@ namespace VariantAnnotation
             return StringBuilderPool.GetStringAndReturn(sb);
         }
 
-        public IAnnotatedPosition Annotate(IPosition position)
+        public IAnnotatedPosition Annotate(IPosition position, int customInsertionWindowSize = 0, int customBreakendWindowSize = 0)
         {
             if (position == null) return null;
             IAnnotatedVariant[] annotatedVariants = GetAnnotatedVariants(position.Variants);
@@ -99,7 +99,7 @@ namespace VariantAnnotation
             _repeatExpansionProvider?.Annotate(annotatedPosition);
             _conservationProvider?.Annotate(annotatedPosition);
             _taProvider.Annotate(annotatedPosition);
-            _saProvider?.Annotate(annotatedPosition); // needs to come after _taProvider for gene fusions
+            _saProvider?.AnnotateNSA(annotatedPosition,customInsertionWindowSize,customBreakendWindowSize); // needs to come after _taProvider for gene fusions
             _gsaProvider?.Annotate(annotatedPosition);
 
             TrackAffectedGenes(annotatedPosition);

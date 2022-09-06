@@ -27,7 +27,8 @@ namespace Nirvana
     {
         public static (int variantCount, ExitCodes exitCode) Annotate(Stream headerStream, Stream inputVcfStream, Stream outputJsonStream,
             Stream outputJsonIndexStream, AnnotationResources annotationResources, IVcfFilter vcfFilter,
-            bool ignoreEmptyChromosome, bool enableDq = false, HashSet<string> customInfoKeys=null, HashSet<string> customSampleInfoKeys=null)
+            bool ignoreEmptyChromosome, bool enableDq = false, HashSet<string> customInfoKeys=null, HashSet<string> customSampleInfoKeys=null, 
+			int customInsertionWindowSize=0, int customBreakendWindowSize=0)
         {
             var metrics = annotationResources.Metrics;
             PerformanceMetrics.ShowAnnotationHeader();
@@ -66,7 +67,7 @@ namespace Nirvana
                             currentChromosome = chromosome;
                         }
 
-                        var annotatedPosition = position.Variants != null ? annotationResources.Annotator.Annotate(position) : null;
+                        var annotatedPosition = position.Variants != null ? annotationResources.Annotator.Annotate(position, customInsertionWindowSize, customBreakendWindowSize) : null;
 
                         var jsb = annotatedPosition?.GetJsonStringBuilder();
                         if (jsb != null) jsonWriter.WritePosition(annotatedPosition.Position, jsb);

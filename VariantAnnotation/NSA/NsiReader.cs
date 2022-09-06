@@ -92,13 +92,25 @@ namespace VariantAnnotation.NSA
             }
         }
 
-        public IEnumerable<string> GetAnnotation(IVariant variant)
+        public IEnumerable<string> GetAnnotation(IVariant variant, int customInsertionWindowSize = 0, int customBreakendWindowSize = 0)
         {
             var start = variant.Start;
             var end   = variant.End;
+			var vtype = variant.Type;
 
             // for insertions, the end position is one past the last base
+
             if (end < start) Swap.Int(ref start, ref end);
+			
+			if (vtype == VariantType.insertion && customInsertionWindowSize > 0){
+				start = start - customInsertionWindowSize;
+				end = end + customInsertionWindowSize;
+			}
+			if (vtype == VariantType.translocation_breakend && customBreakendWindowSize > 0){
+				start = start - customBreakendWindowSize;
+				end = end + customBreakendWindowSize;
+			}
+
             var overlappingSvs =
                   _intervalForest.GetAllOverlappingIntervals(variant.Chromosome.Index, start, end);
               

@@ -26,7 +26,7 @@ namespace Nirvana
         public          ISequenceProvider             SequenceProvider             { get; }
         public          ITranscriptAnnotationProvider TranscriptAnnotationProvider { get; }
         private         ProteinConservationProvider   ProteinConservationProvider  { get; }
-        public          IAnnotationProvider           SaProvider                   { get; }
+        public          IAnnotationProviderNSA        SaProvider                   { get; }
         public          IAnnotationProvider           GsaProvider                  { get; }
         public          IAnnotationProvider           ConservationProvider         { get; }
         public          IRefMinorProvider             RefMinorProvider             { get; }

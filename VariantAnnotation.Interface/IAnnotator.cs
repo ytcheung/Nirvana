@@ -8,7 +8,7 @@ namespace VariantAnnotation.Interface
 	public interface IAnnotator
 	{
 		GenomeAssembly Assembly { get; }
-		IAnnotatedPosition Annotate(IPosition position);
+		IAnnotatedPosition Annotate(IPosition position, int customInsertionWindowSize = 0, int customBreakendWindowSize = 0);
 		IEnumerable<string> GetGeneAnnotations();
 		void EnableMitochondrialAnnotation();
 	}

@@ -26,11 +26,12 @@ namespace Nirvana
         private static          string       _customStrTsv;
         private static          string       _customInfoKeysString;
         private static          string       _customSampleInfoKeysString;
-        
+		private static          string       _customInsertionWindowSize;
+        private static          string       _customBreakendWindowSize;
+		
         private static          bool         _forceMitochondrialAnnotation;
         private static          bool         _useLegacyVids;
         private static          bool         _enableDq;
-        
 
         private static ExitCodes ProgramExecution()
         {
@@ -44,12 +45,17 @@ namespace Nirvana
             var customSampleInfoKeys = string.IsNullOrEmpty(_customSampleInfoKeysString) ?
                 null: 
                 new HashSet<string>(_customSampleInfoKeysString.OptimizedSplit(','));
+				
+			int customInsertionWindowSize;
+			customInsertionWindowSize = int.TryParse(_customInsertionWindowSize, out customInsertionWindowSize) ? customInsertionWindowSize : 0;
+			int customBreakendWindowSize;
+			customBreakendWindowSize = int.TryParse(_customBreakendWindowSize, out customBreakendWindowSize) ? customBreakendWindowSize : 0;
 
             using (var inputVcfStream        = _vcfPath        == "-"  ? Console.OpenStandardInput() : GZipUtilities.GetAppropriateReadStream(_vcfPath))
             using (var outputJsonStream      = _outputFileName == "-"  ? Console.OpenStandardOutput() : new BlockGZipStream(FileUtilities.GetCreateStream(_outputFileName + ".json.gz"), CompressionMode.Compress))
             using (var outputJsonIndexStream = jasixFileName   == null ? null : FileUtilities.GetCreateStream(jasixFileName))
                 return StreamAnnotation.Annotate(null, inputVcfStream, outputJsonStream, outputJsonIndexStream, annotationResources, 
-                    new NullVcfFilter(), false, _enableDq, customInfoKeys, customSampleInfoKeys).exitCode;
+                    new NullVcfFilter(), false, _enableDq, customInfoKeys, customSampleInfoKeys, customInsertionWindowSize, customBreakendWindowSize).exitCode;
         }
 
         private static AnnotationResources GetAnnotationResources()
@@ -128,6 +134,16 @@ namespace Nirvana
                     "vcf-sample-info=",
                     "additional vcf format field keys (comma separated) desired in the output",
                     v => _customSampleInfoKeysString = v
+                },
+				{
+                    "ins-window-size=",
+                    "Base pairs added upstream and downstream of each insertion when searching for overlaps (Default:0)",
+                    v => _customInsertionWindowSize = v
+                },
+				{
+                    "bnd-window-size=",
+                    "Base pairs added upstream and downstream of each breakend when searching for overlaps (Default:0)",
+                    v => _customBreakendWindowSize = v
                 }
             };
 

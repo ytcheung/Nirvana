@@ -10,7 +10,7 @@ namespace VariantAnnotation.Interface
     {
         ISequenceProvider SequenceProvider { get; }
         ITranscriptAnnotationProvider TranscriptAnnotationProvider { get; }
-        IAnnotationProvider SaProvider { get; }
+        IAnnotationProviderNSA SaProvider { get; }
         IAnnotationProvider ConservationProvider { get; }
         IRefMinorProvider RefMinorProvider { get; }
         IGeneAnnotationProvider GeneAnnotationProvider { get; }

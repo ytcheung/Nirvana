@@ -6,6 +6,6 @@ namespace VariantAnnotation.Interface.SA
     public interface INsiReader : ISaMetadata
     {
         ReportFor           ReportFor { get; }
-        IEnumerable<string> GetAnnotation(IVariant variant);
+        IEnumerable<string> GetAnnotation(IVariant variant, int customInsertionWindowSize = 0, int customBreakendWindowSize = 0);
     }
 }
